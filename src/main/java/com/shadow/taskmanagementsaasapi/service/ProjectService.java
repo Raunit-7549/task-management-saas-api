@@ -33,4 +33,35 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    public List<Project> getProjects() {
+        return projectRepository.findAll();
+    }
+
+    public Project getProjectById(Long id) {
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Project not found with ID: " + id));
+    }
+
+    public Project updateProject(Long id, Project updatedProject) {
+        Project existingProject = getProjectById(id);
+
+        if (updatedProject.getName() != null) {
+            existingProject.setName(updatedProject.getName());
+        }
+        if (updatedProject.getDescription() != null) {
+            existingProject.setDescription(updatedProject.getDescription());
+        }
+        if (updatedProject.getStatus() != null) {
+            existingProject.setStatus(updatedProject.getStatus());
+        }
+
+        return projectRepository.save(existingProject);
+    }
+
+    public void deleteProject(Long id) {
+        if (!projectRepository.existsById(id)) {
+            throw new RuntimeException("Project not found with ID: " + id);
+        }
+        projectRepository.deleteById(id);
+    }
 }

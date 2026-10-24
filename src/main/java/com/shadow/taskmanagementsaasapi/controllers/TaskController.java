@@ -26,4 +26,25 @@ public class TaskController {
         return ResponseEntity.ok(taskService.createTask(task));
     }
 
+    @GetMapping
+    public ResponseEntity<List<Task>> getTasks(){
+        return ResponseEntity.ok(taskService.getTasks());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Task> getTaskById(Long id){
+        return ResponseEntity.ok(taskService.getTaskById(id)); // service
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task updatedTask){
+        return ResponseEntity.ok(taskService.updateTask(id, updatedTask)); // service
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id){
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build(); // service
+    }
+
 }

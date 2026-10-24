@@ -28,4 +28,30 @@ public class UserService {
         }
         return userRepository.save(user);
     }
+
+    public User updateUser(Long id, User updatedUser) {
+
+        User existingUser = getUserById(id);
+
+        if (updatedUser.getUsername() != null) {
+            existingUser.setUsername(updatedUser.getUsername());
+        }
+        if (updatedUser.getEmail() != null) {
+            existingUser.setEmail(updatedUser.getEmail());
+        }
+        if (updatedUser.getPassword() != null) {
+            existingUser.setPassword(updatedUser.getPassword());
+        }
+        if (updatedUser.getRole() != null) {
+            existingUser.setRole(updatedUser.getRole().toUpperCase());
+        }
+        return userRepository.save(existingUser);
+    }
+
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found with ID: " + id);
+        }
+        userRepository.deleteById(id);
+    }
 }

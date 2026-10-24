@@ -38,7 +38,7 @@ public class Task {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_to_id")
-    private User assignee; // Can be null if unassigned
+    private User assigned; // Can be null if unassigned
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
