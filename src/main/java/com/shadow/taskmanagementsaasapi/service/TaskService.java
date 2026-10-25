@@ -2,8 +2,10 @@ package com.shadow.taskmanagementsaasapi.service;
 
 import com.shadow.taskmanagementsaasapi.model.Project;
 import com.shadow.taskmanagementsaasapi.model.Task;
+import com.shadow.taskmanagementsaasapi.model.User;
 import com.shadow.taskmanagementsaasapi.repository.ProjectRepository;
 import com.shadow.taskmanagementsaasapi.repository.TaskRepository;
+import com.shadow.taskmanagementsaasapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ public class TaskService {
     private final TaskRepository taskRepository;
 
     private final ProjectRepository projectRepository;
+
+    private final UserRepository userRepository;
 
     public List<Task> getTasksByProjectId(Long projectId) {
         return taskRepository.findByProjectId(projectId);
@@ -54,6 +58,21 @@ public class TaskService {
         }
         if (updatedTask.getStatus() != null) {
             existingTask.setStatus(updatedTask.getStatus());
+        }
+
+        if (updatedTask.getPriority() != null) {
+            existingTask.setPriority(updatedTask.getPriority());
+        }
+
+        if (updatedTask.getAssigned() != null) {
+            if (updatedTask.getAssigned().getId() == null) {
+                existingTask.setAssigned(null);
+            } else {
+                Long userId = updatedTask.getAssigned().getId();
+                User assignedUser = userRepository.findById(userId)
+                        .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+                existingTask.setAssigned(assignedUser);
+            }
         }
 
         return taskRepository.save(existingTask);
