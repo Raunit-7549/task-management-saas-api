@@ -25,7 +25,7 @@ public class TaskService {
         return taskRepository.findByProjectId(projectId);
     }
 
-    public Task createTask(Task task){
+    public Task createTask(Task task, String managerEmail){
         if (task.getProject() == null || task.getProject().getId() == null) {
             throw new IllegalArgumentException("Task must belong to a valid project ID.");
         }
@@ -33,6 +33,10 @@ public class TaskService {
         Long projectId = task.getProject().getId();
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found with ID: " + projectId));
+
+        if (project.getOwner() == null || !project.getOwner().getEmail().equals(managerEmail)) {
+            throw new SecurityException("Unauthorized: You can only create tasks in your own projects.");
+        }
 
         task.setProject(project);
         return taskRepository.save(task);
@@ -47,41 +51,67 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found with ID: " + id));
     }
 
-    public Task updateTask(Long id, Task updatedTask) {
+    public Task updateTask(Long id, Task updatedTask, String userEmail) {
         Task existingTask = getTaskById(id);
 
-        if (updatedTask.getTitle() != null) {
-            existingTask.setTitle(updatedTask.getTitle());
-        }
-        if (updatedTask.getDescription() != null) {
-            existingTask.setDescription(updatedTask.getDescription());
-        }
-        if (updatedTask.getStatus() != null) {
-            existingTask.setStatus(updatedTask.getStatus());
+        User currentUser = userRepository.findByEmail(userEmail);
+        if (currentUser == null) {
+            throw new RuntimeException("User not found with email: " + userEmail);
         }
 
-        if (updatedTask.getPriority() != null) {
-            existingTask.setPriority(updatedTask.getPriority());
-        }
+        boolean isProjectManager = existingTask.getProject() != null &&
+                existingTask.getProject().getOwner() != null &&
+                existingTask.getProject().getOwner().getEmail().equals(userEmail);
 
-        if (updatedTask.getAssigned() != null) {
-            if (updatedTask.getAssigned().getId() == null) {
-                existingTask.setAssigned(null);
+        if (isProjectManager) {
+            if (updatedTask.getTitle() != null) {
+                existingTask.setTitle(updatedTask.getTitle());
+            }
+            if (updatedTask.getDescription() != null) {
+                existingTask.setDescription(updatedTask.getDescription());
+            }
+            if (updatedTask.getStatus() != null) {
+                existingTask.setStatus(updatedTask.getStatus());
+            }
+            if (updatedTask.getPriority() != null) {
+                existingTask.setPriority(updatedTask.getPriority());
+            }
+            if (updatedTask.getAssigned() != null) {
+                if (updatedTask.getAssigned().getId() == null) {
+                    existingTask.setAssigned(null);
+                } else {
+                    Long userId = updatedTask.getAssigned().getId();
+                    User assignedUser = userRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+                    existingTask.setAssigned(assignedUser);
+                }
+            }
+        } else {
+
+            boolean isAssignedDeveloper = existingTask.getAssigned() != null &&
+                    existingTask.getAssigned().getEmail().equals(userEmail);
+
+            if (!isAssignedDeveloper) {
+                throw new SecurityException("Unauthorized: You can only update status for tasks assigned to you.");
+            }
+
+            if (updatedTask.getStatus() != null) {
+                existingTask.setStatus(updatedTask.getStatus());
             } else {
-                Long userId = updatedTask.getAssigned().getId();
-                User assignedUser = userRepository.findById(userId)
-                        .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-                existingTask.setAssigned(assignedUser);
+                throw new IllegalArgumentException("Developers can only update the task status.");
             }
         }
 
         return taskRepository.save(existingTask);
     }
+    public void deleteTask(Long id, String managerEmail) {
+        Task existingTask = getTaskById(id);
 
-    public void deleteTask(Long id) {
-        if (!taskRepository.existsById(id)) {
-            throw new RuntimeException("Task not found with ID: " + id);
+        if (existingTask.getProject() == null || existingTask.getProject().getOwner() == null ||
+                !existingTask.getProject().getOwner().getEmail().equals(managerEmail)) {
+            throw new SecurityException("Unauthorized: You can only delete tasks in your own projects.");
         }
+
         taskRepository.deleteById(id);
     }
 }

@@ -42,8 +42,12 @@ public class ProjectService {
                 .orElseThrow(() -> new RuntimeException("Project not found with ID: " + id));
     }
 
-    public Project updateProject(Long id, Project updatedProject) {
+    public Project updateProject(Long id, Project updatedProject, String managerEmail) {
         Project existingProject = getProjectById(id);
+
+        if (existingProject.getOwner() == null || !existingProject.getOwner().getEmail().equals(managerEmail)) {
+            throw new SecurityException("Unauthorized: You can only edit your own projects.");
+        }
 
         if (updatedProject.getName() != null) {
             existingProject.setName(updatedProject.getName());
@@ -58,10 +62,13 @@ public class ProjectService {
         return projectRepository.save(existingProject);
     }
 
-    public void deleteProject(Long id) {
-        if (!projectRepository.existsById(id)) {
-            throw new RuntimeException("Project not found with ID: " + id);
+    public void deleteProject(Long id, String managerEmail) {
+        Project existingProject = getProjectById(id);
+
+        if (existingProject.getOwner() == null || !existingProject.getOwner().getEmail().equals(managerEmail)) {
+            throw new SecurityException("Unauthorized: You can only delete your own projects.");
         }
+
         projectRepository.deleteById(id);
     }
 }

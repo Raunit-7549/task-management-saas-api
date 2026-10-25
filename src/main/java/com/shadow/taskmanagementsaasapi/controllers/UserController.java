@@ -1,12 +1,12 @@
 package com.shadow.taskmanagementsaasapi.controllers;
 
-
 import com.shadow.taskmanagementsaasapi.model.User;
 import com.shadow.taskmanagementsaasapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -26,19 +26,16 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user){
-        return ResponseEntity.ok(userService.createUser(user));
-    }
-
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser){
-        return ResponseEntity.ok(userService.updateUser(id, updatedUser));
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser, Principal principal){
+        String currentUserEmail = principal.getName();
+        return ResponseEntity.ok(userService.updateUser(id, updatedUser, currentUserEmail));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
-        userService.deleteUser(id);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id, Principal principal){
+        String currentUserEmail = principal.getName();
+        userService.deleteUser(id, currentUserEmail);
         return ResponseEntity.noContent().build();
     }
 }

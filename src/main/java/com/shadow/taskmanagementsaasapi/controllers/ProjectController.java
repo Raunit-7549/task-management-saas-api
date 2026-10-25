@@ -4,8 +4,10 @@ import com.shadow.taskmanagementsaasapi.model.Project;
 import com.shadow.taskmanagementsaasapi.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -22,6 +24,7 @@ public class ProjectController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<Project> createProject(@RequestBody Project project) {
         return ResponseEntity.ok(projectService.createProject(project));
     }
@@ -37,13 +40,17 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project updatedProject){
-        return ResponseEntity.ok(projectService.updateProject(id, updatedProject));
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<Project> updateProject(@PathVariable Long id, @RequestBody Project updatedProject, Principal principal){
+        String managerEmail = principal.getName();
+        return ResponseEntity.ok(projectService.updateProject(id, updatedProject, managerEmail));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id){
-        projectService.deleteProject(id);
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<Void> deleteProject(@PathVariable Long id, Principal principal){
+        String managerEmail = principal.getName();
+        projectService.deleteProject(id, managerEmail);
         return ResponseEntity.noContent().build();
     }
 }
