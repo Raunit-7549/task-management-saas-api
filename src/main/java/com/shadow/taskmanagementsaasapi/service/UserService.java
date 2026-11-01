@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
-    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+    private final PasswordEncoder passwordEncoder;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -35,7 +35,7 @@ public class UserService {
     }
 
     public User registerUser(User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         if (user.getEmail() != null && userRepository.findByEmail(user.getEmail()) != null) {
             throw new IllegalArgumentException("A user with this email already exists: " + user.getEmail());
@@ -75,10 +75,7 @@ public class UserService {
             existingUser.setEmail(updatedUser.getEmail());
         }
         if (updatedUser.getPassword() != null) {
-            existingUser.setPassword(encoder.encode(updatedUser.getPassword())); // Encrypt new password!
-        }
-        if (updatedUser.getRole() != null) {
-            existingUser.setRole(updatedUser.getRole().toUpperCase());
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword())); // Encrypt new password!
         }
         return userRepository.save(existingUser);
     }

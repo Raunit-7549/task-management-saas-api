@@ -1,6 +1,8 @@
 package com.shadow.taskmanagementsaasapi.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,15 +22,19 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Task title is required")
+    @Size(max = 150, message = "Task title cannot exceed 150 characters")
     @Column(nullable = false, length = 150)
     private String title;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @NotBlank(message = "Task status is required")
     @Column(nullable = false)
     private String status; // e.g., "TODO", "IN_PROGRESS", "DONE"
 
+    @NotBlank(message = "Task priority is required")
     @Column(nullable = false)
     private String priority; // e.g., "LOW", "MEDIUM", "HIGH", "URGENT"
 

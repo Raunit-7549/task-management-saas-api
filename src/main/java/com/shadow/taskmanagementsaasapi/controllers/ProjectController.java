@@ -2,6 +2,7 @@ package com.shadow.taskmanagementsaasapi.controllers;
 
 import com.shadow.taskmanagementsaasapi.model.Project;
 import com.shadow.taskmanagementsaasapi.service.ProjectService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +26,7 @@ public class ProjectController {
 
     @PostMapping
     @PreAuthorize("hasRole('MANAGER')")
-    public ResponseEntity<Project> createProject(@RequestBody Project project) {
+    public ResponseEntity<Project> createProject(@Valid @RequestBody Project project) {
         return ResponseEntity.ok(projectService.createProject(project));
     }
 

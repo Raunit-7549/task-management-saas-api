@@ -2,6 +2,7 @@ package com.shadow.taskmanagementsaasapi.controllers;
 
 import com.shadow.taskmanagementsaasapi.model.Task;
 import com.shadow.taskmanagementsaasapi.service.TaskService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +26,7 @@ public class TaskController {
 
     @PostMapping
     @PreAuthorize("hasRole('MANAGER')")
-    public ResponseEntity<Task> createTask(@RequestBody Task task, Principal principal) {
+    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task, Principal principal) {
         String managerEmail = principal.getName();
         return ResponseEntity.ok(taskService.createTask(task, managerEmail));
     }

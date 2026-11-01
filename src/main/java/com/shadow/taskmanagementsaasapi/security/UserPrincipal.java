@@ -27,7 +27,16 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
+        // Return email as the unique identifier for Spring Security's principal
+        return user.getEmail();
+    }
+
+    public String getDisplayName() {
         return user.getUsername();
+    }
+
+    public User getUser() {
+        return user;
     }
 
     @Override
