@@ -32,11 +32,11 @@ public class Task {
 
     @NotBlank(message = "Task status is required")
     @Column(nullable = false)
-    private String status; // e.g., "TODO", "IN_PROGRESS", "DONE"
+    private String status;
 
     @NotBlank(message = "Task priority is required")
     @Column(nullable = false)
-    private String priority; // e.g., "LOW", "MEDIUM", "HIGH", "URGENT"
+    private String priority;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
@@ -46,7 +46,7 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_to_id")
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private User assigned; // Can be null if unassigned
+    private User assigned;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
