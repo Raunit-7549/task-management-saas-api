@@ -2,7 +2,7 @@
 
 > A robust, production-ready RESTful API for multi-role task management built with **Java 21**, **Spring Boot**, **Spring Security**, and **MySQL**.
 
-**Technologies:** `Java 21` • `Spring Boot` • `Spring Security` • `JWT (JSON Web Tokens)` • `Spring Data JPA` • `Hibernate` • `MySQL` • `Maven` • `Lombok`
+**Technologies:** `Java 21` • `Spring Boot` • `Spring Security` • `JWT (JSON Web Tokens)` • `Spring Data JPA` • `Hibernate` • `MySQL` • `OpenAPI 3.0 (Swagger UI)` • `Maven` • `Lombok`
 
 ---
 
@@ -21,6 +21,8 @@
   - Input validation using Jakarta Validation (`@NotBlank`, `@Email`, `@Size`, `@Valid`).
   - Write-only serialization for passwords (`@JsonProperty(access = WRITE_ONLY)`) preventing hash leakage in JSON responses.
   - Protection against privilege escalation during user updates.
+- **📖 Interactive API Documentation**:
+  - Auto-generated OpenAPI 3.0 specifications and interactive **Swagger UI** for browser-based testing.
 - **🗄️ Relational Data Modeling**:
   - Unidirectional & bidirectional JPA mappings (`@ManyToOne`) with lazy-loading performance optimization.
   - Automatic timestamp auditing (`@CreationTimestamp`, `@UpdateTimestamp`).
@@ -77,11 +79,25 @@ erDiagram
 | **Language** | Java 21 (LTS) |
 | **Framework** | Spring Boot |
 | **Security** | Spring Security, JJWT, BCrypt |
+| **API Documentation** | OpenAPI 3.0, Swagger UI (`springdoc-openapi`) |
 | **ORM / Persistence** | Spring Data JPA, Hibernate, MySQL Connector/J |
 | **Validation** | Jakarta Bean Validation (Hibernate Validator) |
 | **Boilerplate Reduction** | Project Lombok |
 | **Build Tool** | Apache Maven |
 | **Database** | MySQL |
+
+---
+
+## 📖 Interactive API Documentation (Swagger UI)
+
+The API is fully documented using **OpenAPI 3.0**. Once the application is running, you can explore, test, and execute all endpoints interactively in your browser without needing external tools like Postman:
+
+- **Swagger UI Dashboard:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+- **OpenAPI JSON Specification:** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+
+> 💡 **Quick Test via Swagger:**
+> 1. Execute `POST /api/auth/register` and `POST /api/auth/login` to obtain your JWT token.
+> 2. Copy the token and supply it in authorization headers to test protected Project and Task endpoints directly.
 
 ---
 
@@ -164,7 +180,8 @@ Using the Maven wrapper:
 .\mvnw.cmd clean spring-boot:run
 ```
 
-The application will start on **`http://localhost:8080`**.
+The application will start on **`http://localhost:8080`**.  
+Access the interactive Swagger documentation at **`http://localhost:8080/swagger-ui.html`**.
 
 ---
 
@@ -223,12 +240,20 @@ task-management-saas-api/
 │   │   └── resources/
 │   │       └── application.properties # Main Spring configuration
 │   └── test/                     # Unit and Integration Tests
+├── screenshots/                  # Documentation & UI screenshots
 ├── .env                          # Local secrets (git-ignored)
 ├── pom.xml                       # Maven dependencies and build plugins
 └── README.md
 ```
 
+---
 
+## 🔮 Upcoming Enhancements
+
+- [ ] Centralized Exception Handling via `@RestControllerAdvice`
+- [x] Interactive Swagger / OpenAPI documentation via `springdoc-openapi`
+- [ ] Containerized deployment with Docker and Docker Compose
+- [ ] Query pagination and sorting (`Pageable`) for project and task listings
 
 ---
 
