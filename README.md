@@ -246,16 +246,6 @@ task-management-saas-api/
 └── README.md
 ```
 
----
-
-## 🔮 Upcoming Enhancements
-
-- [ ] Centralized Exception Handling via `@RestControllerAdvice`
-- [x] Interactive Swagger / OpenAPI documentation via `springdoc-openapi`
-- [ ] Containerized deployment with Docker and Docker Compose
-- [ ] Query pagination and sorting (`Pageable`) for project and task listings
-
----
 
 ## 📄 License
 
