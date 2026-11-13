@@ -150,7 +150,7 @@ Base URL: `http://localhost:8080`
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/task-management-saas-api.git
+git clone https://github.com/Raunit-7549/task-management-saas-api.git
 cd task-management-saas-api
 ```
 
